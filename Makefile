@@ -1,10 +1,17 @@
 #!/bin/bash
+CLEAR = \033[0m
+RESET = \033[0m
+GREEN = \033[32m
+RED = \033[31m
+PURPLE = \033[35m
+BOLD = \033[1m
+GREY = \033[90m
 
 NAME			= inception
 CONTAINERS		= $(shell docker ps -a -q)
 VOLUMES			= $(shell docker volume ls -q)
-HOSTS			= $(shell cat /etc/hosts | grep -e 'rbulanad.42.fr' | cut -f2- | tr -d '\n')
-EXPECTED		= "rbulanad.42.fr"
+HOSTS			= $(shell cat /etc/hosts | grep -e 'rbulanad.42.fr' | awk '{print $$2}' | tr -d '\n')
+EXPECTED		= rbulanad.42.fr
 
 all: start
 
@@ -13,7 +20,8 @@ init:
 	@mkdir -p ~/data/mariadb
 
 check-hosts:
-	@if [ "$(HOSTS)" = "$(EXPECTED)" ]; then \
+	echo "HOSTS: $(HOSTS)"; \
+	if [ "$(HOSTS)" = "$(EXPECTED)"  ]; then \
 		printf "${CLEAR}${RESET}${GREEN}»${RESET} [${PURPLE}${BOLD}${NAME}${RESET}]: Hosts ${GREEN}already ${RESET}configured.\n${RESET}"; \
 	else \
 		printf "${CLEAR}${RESET}${GREEN}»${RESET} [${PURPLE}${BOLD}${NAME}${RESET}]: Hosts are ${RED}not configured${RESET}, please refer to GitHub.\n${RESET}"; \
